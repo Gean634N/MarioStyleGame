@@ -3,6 +3,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+const gravity = 0.5;
+
 /** Reference Colors
  *  Gray1: #adbac7
  *  Gray2: #909dab
@@ -34,23 +36,38 @@ class Player {
   }
 }
 
+// Creat a player in a functional js code
 const creatPlayer = () => {
   const Player = {
     position: {
       x: 100,
       y: 100
     },
+    velocity: {
+      x: 0,
+      y: 0
+    },
     width: 25,
     height: 25,
     draw: (c) => {
       c.fillStyle = '#545d68'
       c.fillRect(Player.position.x, Player.position.y, Player.width, Player.height);
+    },
+    update: () => {
+      if (Player.position.y + Player.height > canvas.height) Player.velocity.y = 0;
+      else Player.position.y += Player.velocity.y;
+      Player.velocity.y += gravity;
     }
   }
   return Player;
 }
 
-// const player = new Player();
-
 const player = creatPlayer();
-player.draw(ctx);
+
+const animate = () => {
+  requestAnimationFrame(animate);
+  player.update();
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  player.draw(ctx);
+}
+animate();
