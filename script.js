@@ -29,8 +29,10 @@ const creatPlayer = () => {
     },
     velocity: {
       x: 0,
-      y: 0
+      y: 0,
     },
+    speed: 10,
+    impulse: 15,
     width: 25,
     height: 25,
     draw: (c) => {
@@ -42,7 +44,7 @@ const creatPlayer = () => {
       return Player.position.y + Player.height + Player.velocity.y > canvas.height
     },
     update: () => {
-      //[GRAVITY]
+      //[GRAVIDADE]
       Player.position.y += Player.velocity.y;
       Player.position.x += Player.velocity.x;
       (Player.onGround()) // testa se o personagem está no ção
@@ -52,8 +54,24 @@ const creatPlayer = () => {
   }
   return Player;
 }
+const creatPlatform = () => {
+  const Platform = {
+    position: {
+      x: 200,
+      y: 350
+    },
+    width: 200,
+    height: 20,
+    draw: (c) => {
+      c.fillStyle = '#80d9e5';
+      c.fillRect(Platform.position.x, Platform.position.y, Platform.width, Platform.height)
+    }
+  }
+  return Platform;
+}
 
 const player = creatPlayer();
+const platform = creatPlatform();
 const keys = {
   right: {
     pressed: false
@@ -68,15 +86,25 @@ const animate = () => {
   player.update();
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   player.draw(ctx);
+  platform.draw(ctx);
 
-  // MOVIMENTAÇÂO HORIZONTAL
+  // HORIZONTAL MOVMENT
   if (keys.right.pressed) {
-    player.velocity.x = 5;
+    player.velocity.x = player.speed;
   } else if (keys.left.pressed) {
-    player.velocity.x = -5;
+    player.velocity.x = -player.speed;
   } else {
     player.velocity.x = 0;
   }
+
+  // PLATFORM COLISION DETECTION
+  if (
+    player.position.y + player.height <= platform.position.y &&
+    player.position.y + player.height + player.velocity.y >= platform.position.y &&
+    player.position.x + player.width >= platform.position.x &&
+    player.position.x <= platform.position.x + platform.width) {
+    player.velocity.y = 0
+  };
 }
 animate();
 
@@ -89,7 +117,7 @@ addEventListener('keydown', ({ key }) => {
       keys.left.pressed = true;
       break;
     case "w": // CIMA
-      if (player.onGround()) player.velocity.y -= 20;
+      /*if (player.onGround())*/ player.velocity.y -= player.impulse;
       break;
     case "s": // BAIXO
       break;
