@@ -7,8 +7,8 @@ Project of a simple game to learn and practice programming logic and canvas.
 - Javascript
 
 ### Project steps
-- [X] projact setup
-- [ ] Player creation
+- [X] project setup
+- [X] Player creation
 - [ ] Gravity
 - [ ] Player moviment
 - [ ] Platforms
