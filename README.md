@@ -10,7 +10,7 @@ Project of a simple game to learn and practice programming logic and canvas.
 - [X] Project setup
 - [X] Player creation
 - [X] Gravity
-- [ ] Player moviment
+- [X] Player moviment
 - [ ] Platforms
 - [ ] Scroll the background
 - [ ] Win scenario

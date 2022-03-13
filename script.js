@@ -20,23 +20,7 @@ const gravity = 0.5;
 
 canvas.style.background = '#22272e';
 
-
-class Player {
-  constructor() {
-    this.position = {
-      x: 100,
-      y: 100
-    },
-      this.width = 100,
-      this.height = 100
-  }
-
-  draw() {
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-  }
-}
-
-// Creat a player in a functional js code
+// [PLAYER]
 const creatPlayer = () => {
   const Player = {
     position: {
@@ -53,21 +37,73 @@ const creatPlayer = () => {
       c.fillStyle = '#545d68'
       c.fillRect(Player.position.x, Player.position.y, Player.width, Player.height);
     },
+    onGround: () => {
+      // A variavel 'Player.velocity.y' é necessária para que essa igualdade não seja verdadeira quando o personagem  tenta pular.
+      return Player.position.y + Player.height + Player.velocity.y > canvas.height
+    },
     update: () => {
-      if (Player.position.y + Player.height > canvas.height) Player.velocity.y = 0;
-      else Player.position.y += Player.velocity.y;
-      Player.velocity.y += gravity;
+      //[GRAVITY]
+      Player.position.y += Player.velocity.y;
+      Player.position.x += Player.velocity.x;
+      (Player.onGround()) // testa se o personagem está no ção
+        ? Player.velocity.y = 0 // se sim muda a velocidade para 0(zero)
+        : Player.velocity.y += gravity; // se não incrementa a velocidade
     }
   }
   return Player;
 }
 
 const player = creatPlayer();
+const keys = {
+  right: {
+    pressed: false
+  },
+  left: {
+    pressed: false
+  }
+}
 
 const animate = () => {
   requestAnimationFrame(animate);
   player.update();
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   player.draw(ctx);
+
+  // MOVIMENTAÇÂO HORIZONTAL
+  if (keys.right.pressed) {
+    player.velocity.x = 5;
+  } else if (keys.left.pressed) {
+    player.velocity.x = -5;
+  } else {
+    player.velocity.x = 0;
+  }
 }
 animate();
+
+addEventListener('keydown', ({ key }) => {
+  switch (key) {
+    case "d": // DIREITA
+      keys.right.pressed = true;
+      break;
+    case "a": // ESQUERDA
+      keys.left.pressed = true;
+      break;
+    case "w": // CIMA
+      if (player.onGround()) player.velocity.y -= 20;
+      break;
+    case "s": // BAIXO
+      break;
+  }
+});
+addEventListener('keyup', ({ key }) => {
+  switch (key) {
+    case "d": // DIREITA
+      keys.right.pressed = false;
+      break;
+    case "a": // ESQUERDA
+      keys.left.pressed = false;
+      break;
+    case "s": // BAIXO
+      break;
+  }
+});
