@@ -12,7 +12,7 @@ Project of a simple game to learn and practice programming logic and canvas.
 - [X] Gravity
 - [X] Player moviment
 - [x] Platforms
-- [ ] Scroll the background
+- [X] Scroll the background
 - [ ] Win scenario
 - [ ] Image platformes
 - [ ] Paralax scroll

@@ -24,14 +24,14 @@ canvas.style.background = '#22272e';
 const creatPlayer = () => {
   const Player = {
     position: {
-      x: 100,
+      x: 50,
       y: 100
     },
     velocity: {
       x: 0,
       y: 0,
     },
-    speed: 10,
+    speed: 5,
     impulse: 15,
     width: 25,
     height: 25,
@@ -54,11 +54,13 @@ const creatPlayer = () => {
   }
   return Player;
 }
-const creatPlatform = () => {
+
+// PLATFORM
+const creatPlatform = ({ x, y }) => {
   const Platform = {
-    position: {
-      x: 200,
-      y: 350
+    position: { // posição passada quando a plataforma é criada
+      x,
+      y
     },
     width: 200,
     height: 20,
@@ -71,7 +73,11 @@ const creatPlatform = () => {
 }
 
 const player = creatPlayer();
-const platform = creatPlatform();
+const platforms = [
+  creatPlatform({x: 200, y: 100}),
+  creatPlatform({x: 750, y: 200}),
+  creatPlatform({x: 300, y: 300})
+];
 const keys = {
   right: {
     pressed: false
@@ -86,25 +92,39 @@ const animate = () => {
   player.update();
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   player.draw(ctx);
-  platform.draw(ctx);
+  platforms.forEach((platform) => {
+    platform.draw(ctx);
+  })
 
   // HORIZONTAL MOVMENT
-  if (keys.right.pressed) {
+  if (keys.right.pressed && player.position.x <= canvas.width * 2 / 5) {
     player.velocity.x = player.speed;
-  } else if (keys.left.pressed) {
+  } else if (keys.left.pressed && player.position.x > 100) {
     player.velocity.x = -player.speed;
   } else {
+    if (keys.right.pressed) {
+      platforms.forEach((platform) => {
+        platform.position.x -= 5;
+      })
+    } else if (keys.left.pressed) {
+      platforms.forEach((platform) => {
+        platform.position.x += 5;
+      })
+    }
     player.velocity.x = 0;
   }
 
   // PLATFORM COLISION DETECTION
-  if (
-    player.position.y + player.height <= platform.position.y &&
-    player.position.y + player.height + player.velocity.y >= platform.position.y &&
-    player.position.x + player.width >= platform.position.x &&
-    player.position.x <= platform.position.x + platform.width) {
-    player.velocity.y = 0
-  };
+  platforms.forEach((platform) => {
+    if (
+      player.position.y + player.height <= platform.position.y &&
+      player.position.y + player.height + player.velocity.y >= platform.position.y &&
+      player.position.x + player.width >= platform.position.x &&
+      player.position.x <= platform.position.x + platform.width
+    ) {
+      player.velocity.y = 0
+    };
+  })
 }
 animate();
 
@@ -117,7 +137,7 @@ addEventListener('keydown', ({ key }) => {
       keys.left.pressed = true;
       break;
     case "w": // CIMA
-      /*if (player.onGround())*/ player.velocity.y -= player.impulse;
+      if (player.velocity.y === 0) player.velocity.y -= player.impulse;
       break;
     case "s": // BAIXO
       break;
